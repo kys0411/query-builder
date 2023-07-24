@@ -1,18 +1,15 @@
 package util;
 
-import static util.constant.Symbol.*;
-import static util.constant.WhereType.*;
-
 public class Where {
     private static final String WHERE = "WHERE";
 
-    private StringBuilder query;
+    private String query;
 
-    private Where(StringBuilder query) {
+    private Where(String query) {
         this.query = query;
     }
 
-    StringBuilder getQuery() {
+    String getQuery() {
         return query;
     }
 
@@ -20,99 +17,74 @@ public class Where {
         private StringBuilder query = new StringBuilder();
 
         public Builder() {
-           query.append(BLANK.getSymbol()).append(WHERE);
+           query.append(" " + WHERE);
         }
 
-        public Builder equals(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(EQUAL.getSymbol())
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder equals(String column, String value) {
+            String statement = String.format(" %s = %s", column, value);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder greater(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(GREATER_THAN_SIGN.getSymbol())
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder greater(String column, String value) {
+            String statement = String.format(" %s > %s", column, value);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder greaterOrEqual(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(GREATER_OR_EQUAL.getSymbol())
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder greaterOrEqual(String column, String value) {
+            String statement = String.format(" %s >= %s", column, value);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder less(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(LESS_THAN_SIGN.getSymbol())
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder less(String column, String value) {
+            String statement = String.format(" %s < %s", column, value);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder lessOrEqual(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(LESS_OR_EQUAL.getSymbol())
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder lessOrEqual(String column, String value) {
+            String statement = String.format(" %s <= %s", column, value);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder like(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(LIKE)
-                    .append(BLANK.getSymbol())
-                    .append(QUESTION_MARK.getSymbol());
+        public Builder like(String column, String pattern) {
+            String statement = String.format(" %s LIKE %s", column, pattern);
+            query.append(statement);
 
             return this;
         }
 
-        public Builder between(String column) {
-            greaterOrEqual(column);
-            and();
-            lessOrEqual(column);
+        public Builder between(String column, String lessNum, String greaterNum) {
+            String statement = String.format(" %s BETWEEN %s AND %s", column, lessNum, greaterNum);
+            query.append(statement);
 
             return this;
         }
 
         public Builder and() {
-            query.append(BLANK.getSymbol())
-                    .append(AND);
+            String statement = String.format(" AND");
+            query.append(statement);
 
             return this;
         }
 
         public Builder or() {
-            query.append(BLANK.getSymbol())
-                    .append(OR);
+            String statement = String.format(" OR");
+            query.append(statement);
 
             return this;
         }
 
         public Where build() {
-            return new Where(query);
+            return new Where(query.toString());
         }
     }
 }
