@@ -1,21 +1,17 @@
 package util;
 
-import util.constant.OrderType;
-
-import static util.constant.Symbol.*;
-import static util.constant.Symbol.COMMA;
-
 public class Order {
+    public enum Type {
+        ASC, DESC
+    }
 
-    private static final String ORDER_BY = "ORDER BY";
+    private String query;
 
-    private StringBuilder query;
-
-    private Order(StringBuilder query) {
+    private Order(String query) {
         this.query = query;
     }
 
-    StringBuilder getQuery() {
+    public String getQuery() {
         return query;
     }
 
@@ -23,30 +19,28 @@ public class Order {
         private StringBuilder query = new StringBuilder();
 
         public Builder() {
-            query.append(BLANK.getSymbol()).append(ORDER_BY);
+            String statement= String.format(" ORDER BY");
+            query.append(statement);
         }
 
-        public Builder query(String column, OrderType type) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(BLANK.getSymbol())
-                    .append(type)
-                    .append(COMMA.getSymbol());
+        public Builder query(String column, Type type) {
+            String statement= String.format(" %s %s,", column, type);
+            query.append(statement);
 
             return this;
         }
 
         public Builder query(String column) {
-            query.append(BLANK.getSymbol())
-                    .append(column)
-                    .append(COMMA.getSymbol());
+            String statement= String.format(" %s,", column);
+            query.append(statement);
 
             return this;
         }
 
         public Order build() {
             query.deleteCharAt(query.length() - 1);
-            return new Order(query);
+
+            return new Order(query.toString());
         }
     }
 }
