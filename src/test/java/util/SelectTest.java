@@ -3,26 +3,27 @@ package util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import util.operator.Operator;
 
-import static util.Order.Type.DESC;
 import static util.constant.Table.PERSON;
+import static util.operator.Operator.EQUALS;
+import static util.operator.Operator.GREATER_THAN;
 
 class SelectTest {
 
     @Test
     @DisplayName("select문 테스트")
     void selectTest() {
-        Where where = new Where.Builder()
-                .greater("age", "10")
-                .and()
-                .equals("name", "aaa")
+        Where where = Where.builder("age", GREATER_THAN, 10)
+                .and("name", EQUALS, "aaa")
                 .build();
 
-        Order order = new Order.Builder()
-                .query("id", DESC)
+
+        Order order = Order.builder()
+                .desc("id")
                 .build();
 
-        Select select = new Select.Builder()
+        Select select = Select.builder()
                 .select("*")
                 .from(PERSON)
                 .where(where)

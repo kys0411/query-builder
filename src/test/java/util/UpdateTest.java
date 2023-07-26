@@ -5,17 +5,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static util.constant.Table.PERSON;
+import static util.operator.Operator.EQUALS;
 
 class UpdateTest {
 
     @Test
     @DisplayName("update문 테스트")
     void updateTest() {
-        Where where = new Where.Builder()
-                .equals("id", "1")
-                .build();
+        Where where = Where.builder("id", EQUALS, 1).build();
 
-        Update update = new Update.Builder()
+        Update update = Update.builder()
                 .update(PERSON)
                 .set("name", "bbb")
                 .where(where)
