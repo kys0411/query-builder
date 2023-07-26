@@ -1,5 +1,11 @@
 package util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static util.Order.Type.ASC;
+import static util.Order.Type.DESC;
+
 public class Order {
     public enum Type {
         ASC, DESC
@@ -15,32 +21,34 @@ public class Order {
         return query;
     }
 
-    static public class Builder {
-        private StringBuilder query = new StringBuilder();
+    public static Builder builder() {
+        return new Builder();
+    }
 
-        public Builder() {
-            String statement= String.format(" ORDER BY");
-            query.append(statement);
+    public static class Builder {
+        private List<String> query = new ArrayList<>();
+        private static final String ORDER_BY = "ORDER BY";
+
+        private Builder() {
         }
 
-        public Builder query(String column, Type type) {
-            String statement= String.format(" %s %s,", column, type);
-            query.append(statement);
+        public Builder asc(String column) {
+            String statement = String.format("%s %s", column, ASC);
+            query.add(statement);
 
             return this;
         }
 
-        public Builder query(String column) {
-            String statement= String.format(" %s,", column);
-            query.append(statement);
+        public Builder desc(String column) {
+            String statement = String.format("%s %s", column, DESC);
+            query.add(statement);
 
             return this;
         }
 
         public Order build() {
-            query.deleteCharAt(query.length() - 1);
-
-            return new Order(query.toString());
+            String join = String.join(" ", query);
+            return new Order("%s %s".formatted(ORDER_BY, join));
         }
     }
 }

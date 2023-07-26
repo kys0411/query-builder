@@ -1,6 +1,12 @@
 package util;
 
+import util.operator.Operator;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Where {
+
     private static final String WHERE = "WHERE";
 
     private String query;
@@ -13,78 +19,41 @@ public class Where {
         return query;
     }
 
-    static public class Builder {
-        private StringBuilder query = new StringBuilder();
+    public static Builder builder(String column, Operator operator, Object value) {
+        return new Builder(column, operator, value);
+    }
 
-        public Builder() {
-           query.append(" " + WHERE);
+    public static class Builder {
+        private List<String> query = new ArrayList<>();
+
+        private Builder() {
         }
 
-        public Builder equals(String column, String value) {
-            String statement = String.format(" %s = %s", column, value);
-            query.append(statement);
+        public Builder(String column, Operator operator, Object value) {
+            query.add(generateCondition(column, operator, value));
+        }
+
+        public Builder and(String column, Operator operator, Object value) {
+            String statement = String.format("AND %s", generateCondition(column, operator, value));
+            query.add(statement);
 
             return this;
         }
 
-        public Builder greater(String column, String value) {
-            String statement = String.format(" %s > %s", column, value);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder greaterOrEqual(String column, String value) {
-            String statement = String.format(" %s >= %s", column, value);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder less(String column, String value) {
-            String statement = String.format(" %s < %s", column, value);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder lessOrEqual(String column, String value) {
-            String statement = String.format(" %s <= %s", column, value);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder like(String column, String pattern) {
-            String statement = String.format(" %s LIKE %s", column, pattern);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder between(String column, String lessNum, String greaterNum) {
-            String statement = String.format(" %s BETWEEN %s AND %s", column, lessNum, greaterNum);
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder and() {
-            String statement = String.format(" AND");
-            query.append(statement);
-
-            return this;
-        }
-
-        public Builder or() {
-            String statement = String.format(" OR");
-            query.append(statement);
+        public Builder or(String column, Operator operator, Object value) {
+            String statement = String.format("OR %s %s %s", column, operator.getSymbol(), value);
+            query.add(statement);
 
             return this;
         }
 
         public Where build() {
-            return new Where(query.toString());
+            String join = String.join(" ", query);
+            return new Where("%s %s".formatted(WHERE, join));
+        }
+
+        private String generateCondition(String column, Operator operator, Object value) {
+            return String.format("%s %s %s", column, operator.getSymbol(), value);
         }
     }
 }
