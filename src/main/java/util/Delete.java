@@ -1,11 +1,11 @@
 package util;
 
-import util.constant.Table;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Delete {
+
+    private static final List<String> sql = new ArrayList<>();
 
     private String query;
 
@@ -17,8 +17,32 @@ public class Delete {
         return query;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static DeleteBuilder builder() {
+        return new DeleteBuilder();
+    }
+
+    public static class DeleteBuilder {
+        private DeleteBuilder() {
+
+        }
+
+        public WhereBuilder delete(Class table) {
+            String statement = String.format("%s", table.getSimpleName());
+            sql.add(statement);
+
+            return new WhereBuilder();
+        }
+    }
+
+    public static class WhereBuilder {
+        private WhereBuilder() {
+
+        }
+
+        public Builder where(Where where) {
+            sql.add(where.getQuery());
+            return new Builder();
+        }
     }
 
     public static class Builder {
@@ -28,23 +52,8 @@ public class Delete {
         private Builder() {
         }
 
-        private List<String> query = new ArrayList<>();
-
-        public Builder delete(Table table) {
-            String statement = String.format("%s", table);
-            query.add(statement);
-
-            return this;
-        }
-
-        public Builder where(Where where) {
-            query.add(where.getQuery());
-
-            return this;
-        }
-
         public Delete build() {
-            String join = String.join(" ", query);
+            String join = String.join(" ", sql);
             return new Delete("%s %s".formatted(DELETE_FROM, join));
         }
     }

@@ -1,12 +1,12 @@
 package util;
 
-import util.constant.Table;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Insert {
+
+    private static final List<String> sql = new ArrayList<>();
 
     private String query;
 
@@ -18,52 +18,70 @@ public class Insert {
         return query;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static InsertBuilder builder() {
+        return new InsertBuilder();
     }
 
-    public static class Builder {
+    public static class InsertBuilder {
 
-        private static final String INSERT_INTO = "INSERT INTO";
-        private static final String VALUES = "VALUES";
+        private InsertBuilder() {
 
-        private Builder() {
         }
 
-        private List<String> query = new ArrayList<>();
+        public ValueBuilder insert(Class table) {
+            String statement = String.format("%s", table.getSimpleName());
+            sql.add(statement);
+
+            return new ValueBuilder();
+        }
+    }
+
+    public static class ValueBuilder {
+
+        private static final String VALUES = "VALUES";
+
         private List<String> valueQuery = new ArrayList<>();
 
-        public Builder insert(Table table) {
-            String statement = String.format("%s", table);
-            query.add(statement);
+        private ValueBuilder() {
 
-            return this;
         }
 
         public Builder values(Map<String, Object> map) {
             int i = 0;
 
-            query.add("(");
+            sql.add("(");
             valueQuery.add("(");
 
             for (Map.Entry<String, Object> entry : map.entrySet()){
                 String format = (i == map.size() - 1) ? "%s" : "%s,";
 
-                query.add(format.formatted(entry.getKey()));
+                sql.add(format.formatted(entry.getKey()));
                 valueQuery.add(format.formatted(entry.getValue()));
                 i++;
             }
 
-            query.add(")");
+            sql.add(")");
+            sql.add(VALUES);
             valueQuery.add(")");
 
-            return this;
+            String join = String.join(" ", valueQuery);
+            sql.add(join);
+
+            return new Builder();
+        }
+    }
+
+    public static class Builder {
+
+        private static final String INSERT_INTO = "INSERT INTO";
+
+        private Builder() {
+
         }
 
         public Insert build() {
-            String join = String.join(" ", query);
-            String join2 = String.join(" ", valueQuery);
-            return new Insert("%s %s %s %s".formatted(INSERT_INTO, join, VALUES, join2));
+            String join = String.join(" ", sql);
+            return new Insert("%s %s".formatted(INSERT_INTO, join));
         }
     }
 }
