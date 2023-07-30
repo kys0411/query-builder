@@ -1,13 +1,11 @@
 package util;
 
-import org.junit.jupiter.api.Assertions;
+import domain.Person;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static util.constant.Table.PERSON;
 
 class InsertTest {
 
@@ -22,7 +20,7 @@ class InsertTest {
         map.put("email", "hello@gmail.com");
 
         Insert insert = Insert.builder()
-                .insert(PERSON)
+                .insert(Person.class)
                 .values(map)
                 .build();
 

@@ -1,10 +1,10 @@
 package util;
 
+import domain.Person;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static util.constant.Table.PERSON;
 import static util.operator.Operator.EQUALS;
 
 class UpdateTest {
@@ -15,12 +15,12 @@ class UpdateTest {
         Where where = Where.builder("id", EQUALS, 1).build();
 
         Update update = Update.builder()
-                .update(PERSON)
+                .update(Person.class)
                 .set("name", "bbb")
                 .where(where)
                 .build();
 
         String sql = update.getQuery();
-        Assertions.assertEquals(sql, "UPDATE PERSON SET name = bbb WHERE id = 1");
+        Assertions.assertEquals(sql, "UPDATE Person SET name = bbb WHERE id = 1");
     }
 }
